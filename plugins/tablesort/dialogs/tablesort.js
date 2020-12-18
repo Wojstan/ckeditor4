@@ -34,13 +34,19 @@ CKEDITOR.dialog.add("tablesortDialog", function (editor) {
 			}
 
 			if (table) {
-				let i, doSwitching = false, switched = true;
+				let i, doSwitching = false, switched = true, iterateStart = 0;
+				const thead = table.$.querySelector("thead");
+				//Will start sorting from row 1 if thead exists
+				if (thead) {
+					iterateStart = 1;
+				}
 
+				//When switched has occured, repeat the loop
 				while (switched) {
 					switched = false;
 					const rows = table.$.rows;
 
-					for (i = 0; i < rows.length - 1; i++) {
+					for (i = iterateStart; i < rows.length - 1; i++) {
 						doSwitching = false;
 						const x = rows[i].querySelectorAll("td")[
 							columnIndex
@@ -48,6 +54,7 @@ CKEDITOR.dialog.add("tablesortDialog", function (editor) {
 						const y = rows[i + 1].querySelectorAll("td")[
 							columnIndex
 						];
+						//Check if cells need to be switched
 						if (
 							direction === "Ascending"
 								? compareString(
@@ -65,6 +72,7 @@ CKEDITOR.dialog.add("tablesortDialog", function (editor) {
 							break;
 						}
 					}
+					//Switching
 					if (doSwitching) {
 						rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
 						switched = true;
